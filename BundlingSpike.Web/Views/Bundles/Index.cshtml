@@ -1,0 +1,67 @@
+﻿@model BundlingSpike.Web.Models.BundleGridViewModel
+
+@{
+    ViewBag.Title = "Manage Site Bundles";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<dl class="dl-horizontal">
+    <dt>@Html.DisplayNameFor(x => x.SiteName)</dt>
+    <dd>@Html.DisplayFor(x => x.SiteName)</dd>
+    <dt>@Html.DisplayNameFor(x => x.SiteDescription)</dt>
+    <dd>@Html.DisplayFor(x => x.SiteDescription)</dd>
+</dl>
+
+<div class="panel panel-default">
+    <div class="panel-heading clearfix">
+        <h4 class="panel-title pull-left" style="margin-top:3px;">Bundles</h4>
+        <div class="pull-right">
+            <a href="@Url.RouteUrl("Default", new { action = "Index", controller = "Sites" })" class="btn btn-xs btn-default"><span class="fa fa-arrow-left"></span> Back to Sites</a>
+            <a href="@Url.RouteUrl("Bundles", new { action = "Add", siteId = Model.SiteId.ToString() })" class="btn btn-xs btn-primary"><span class="fa fa-plus"></span> Add Bundle</a>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-condensed">
+            <thead>
+                <tr>
+                    <th>Filename</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if(Model.Items != null && Model.Items.Length > 0)
+                {
+                    foreach(var item in Model.Items)
+                    {
+                        <tr>
+                            <td>@getFilename(item)</td>
+                            <td>@item.Type</td>
+                            <td>@item.Description</td>
+                            <td>
+                                <a href="@Url.RouteUrl("Bundles", new { action = "Edit", siteId = Model.SiteId.ToString(), Id = item.Id.ToString() })" title="Edit" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="top"><span class="fa fa-pencil"></span></a>
+                                <a href="@Url.RouteUrl("Bundles", new { action = "Delete", siteId = Model.SiteId.ToString(), Id = item.Id.ToString() })" title="Delete" class="btn btn-xs btn-danger" style="margin-left:20px;" data-toggle="tooltip" data-placement="top"><span class="fa fa-trash"></span></a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="4" class="text-center"><em>No Results</em></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@functions {
+    string getFilename(BundlingSpike.Web.Models.BundleViewModel m)
+    {
+        return $"{m.Id}.{(m.Type == "StyleSheet" ? "css" : "js")}";
+    }
+}
+
