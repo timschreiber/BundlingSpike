@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace BundlingSpike.Web.Models
@@ -14,5 +15,10 @@ namespace BundlingSpike.Web.Models
 
         [MaxLength(1000)]
         public string Description { get; set; }
+    }
+
+    public class SiteDetailsViewModel : SiteViewModel
+    {
+        public IEnumerable<BundleViewModel> Bundles { get; set; }
     }
 }

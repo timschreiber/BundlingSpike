@@ -17,8 +17,15 @@ namespace BundlingSpike.Web.Models
 
     public class BundleViewModel
     {
+        [Required]
         public Guid Id { get; set; }
+
+        [Required]
+        public Guid SiteId { get; set; }
+
+        [Required]
         public string Type { get; set; }
+
         public string Description { get; set; }
     }
 }

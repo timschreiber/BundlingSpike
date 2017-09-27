@@ -10,7 +10,7 @@
     <div class="panel-heading clearfix">
         <h4 class="panel-title pull-left" style="margin-top:3px;">Sites</h4>
         <div class="pull-right">
-            <a href="@Url.Action("Add", "Sites")" class="btn btn-xs btn-primary"><span class="fa fa-plus"></span> Add Site</a>
+            @Html.RouteLink("Add Site", "Default", new { controller = "Sites", action = "Add" }, new { @class = "btn btn-xs btn-primary" })
         </div>
     </div>
     <div class="table-responsive">
@@ -19,7 +19,6 @@
                 <tr>
                     <th>Name</th>
                     <th>Description</th>
-                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -28,13 +27,8 @@
                     foreach(var item in Model)
                     {
                         <tr>
-                            <td>@item.Name</td>
+                            <td><strong>@Html.RouteLink(item.Name, "Default", new { controller = "Sites", action = "Details", id = item.Id })</strong></td>
                             <td>@item.Description</td>
-                            <td class="text-right">
-                                <a href="@Url.Action("Edit", "Sites", new { id = item.Id })" title="Edit Details" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="top"><span class="fa fa-pencil"></span></a>
-                                <a href="@Url.Action("Index", "Bundles", new { siteId = item.Id })" title="Manage Bundles" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="top"><span class="fa fa-code"></span></a>
-                                <a href="@Url.Action("Delete", "Sites", new { id = item.Id })" title="Delete" class="btn btn-xs btn-danger" style="margin-left:20px;" data-toggle="tooltip" data-placement="top"><span class="fa fa-trash"></span></a>
-                            </td>
                         </tr>
                     }
                 }

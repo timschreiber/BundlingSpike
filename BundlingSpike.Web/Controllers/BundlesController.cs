@@ -1,4 +1,5 @@
 ﻿using BundlingSpike.Web.Models;
+using BundlingSpike.Web.Models.Entities;
 using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
@@ -27,12 +28,55 @@ namespace BundlingSpike.Web.Controllers
                 Items = site.Bundles.Select(x => new BundleViewModel
                 {
                     Id = x.Id,
+                    SiteId = x.SiteId,
                     Type = x.Type.ToString(),
                     Description = x.Description
                 }).ToArray()
             };
 
             return View(model);
+        }
+
+        [HttpGet]
+        public ActionResult Add(Guid siteId)
+        {
+            var userId = User.Identity.GetUserId();
+            var site = Context.Sites.SingleOrDefault(x => x.Id == siteId && x.UserId == userId);
+
+            populateBundleTypeSelectList();
+            return View(new BundleViewModel { Id = default(Guid), SiteId = site.Id });
+        }
+
+        [HttpPost]
+        public ActionResult Add(Guid siteId, BundleViewModel model)
+        {
+            if(ModelState.IsValid)
+            {
+                if (model.SiteId != siteId)
+                    return View("Error");
+
+                var userId = User.Identity.GetUserId();
+                var site = Context.Sites.SingleOrDefault(x => x.Id == siteId && x.UserId == userId);
+                var bundle = new Bundle
+                {
+                    Type = (BundleType)Enum.Parse(typeof(BundleType), model.Type),
+                    Description = model.Description,
+                    Site = site
+                };
+
+                Context.Bundles.Add(bundle);
+                Context.SaveChanges();
+
+                return RedirectToRoute("Default", new { controller = "Sites", action = "Details", Id = site.Id });
+            }
+
+            populateBundleTypeSelectList();
+            return View(model);
+        }
+
+        private void populateBundleTypeSelectList()
+        {
+            ViewBag.BundleTypes = Enum.GetNames(typeof(BundleType)).Select(x => new SelectListItem { Text = x, Value = x });
         }
     }
 }

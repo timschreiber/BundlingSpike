@@ -1,0 +1,85 @@
+﻿@model BundlingSpike.Web.Models.SiteDetailsViewModel
+
+@{
+    ViewBag.Title = "Site Details";
+}
+
+<div class="clearfix">
+    <h2 class="pull-left">@ViewBag.Title</h2>
+    <div class="pull-right">
+        @Html.RouteLink("Back to Site List", "Default", new { controller = "Sites", action = "Index" }, new { @class = "btn btn-xs btn-default", style="margin-top:25px;" })
+    </div>
+</div>
+
+
+<div class="panel panel-default">
+    <div class="panel-heading clearfix">
+        <h4 class="panel-title pull-left" style="margin-top:3px;">Site Details</h4>
+        <div class="pull-right">
+            @Html.RouteLink("Delete Site", "Default", new { controller = "Sites", action = "Delete", Id = Model.Id }, new { @class = "btn btn-xs btn-danger" })
+            @Html.RouteLink("Edit Site", "Default", new { controller = "Sites", action = "Edit", Id = Model.Id }, new { @class = "btn btn-xs btn-primary" })
+        </div>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-xs-12 col-md-6">
+                <div class="form-group">
+                    @Html.LabelFor(x => x.Name)
+                    <p class="form-control-static">@Html.DisplayFor(x => x.Name)</p>
+                </div>
+            </div>
+            <div class="col-xs-12 col-md-6">
+                <div class="form-group">
+                    @Html.LabelFor(x => x.Description)
+                    <p class="form-control-static">@Html.DisplayFor(x => x.Description)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading clearfix">
+        <h4 class="panel-title pull-left" style="margin-top:3px;">Bundles</h4>
+        <div class="pull-right">
+            @Html.RouteLink("Add Bundle", "Bundles", new { action = "Add", siteId = Model.Id }, new { @class = "btn btn-xs btn-primary" })
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-condensed">
+            <thead>
+                <tr>
+                    <th>Filename</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Bundles != null && Model.Bundles.Count() > 0)
+                {
+                    foreach (var bundle in Model.Bundles)
+                    {
+                        <tr>
+                            <td><strong>@Html.RouteLink(getFilename(bundle), "Bundles", new { action = "Details", siteId = Model.Id, id = bundle.Id })</strong></td>
+                            <td>@bundle.Type</td>
+                            <td>@bundle.Description</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="4" class="text-center"><em>No Results</em></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@functions {
+    string getFilename(BundlingSpike.Web.Models.BundleViewModel m)
+    {
+        return $"{m.Id}.{(m.Type == "StyleSheet" ? "css" : "js")}";
+    }
+}

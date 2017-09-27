@@ -50,8 +50,35 @@ namespace BundlingSpike.Web.Controllers
                 Context.Sites.Add(site);
                 Context.SaveChanges();
 
-                return RedirectToAction("Index", "Sites");
+                return RedirectToRoute("Default", new { controller = "Sites", action = "Details", id = site.Id });
             }
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public ActionResult Details(Guid id)
+        {
+            var userId = User.Identity.GetUserId();
+
+            var model = Context.Sites
+                .Where(x => x.Id == id && x.UserId == userId)
+                .Select(x => new SiteDetailsViewModel
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Description = x.Description,
+                    Bundles = x.Bundles.Select(y => new BundleViewModel
+                    {
+                        Id = y.Id,
+                        Type = y.Type.ToString(),
+                        Description = y.Description,
+                        SiteId = x.Id
+                    })
+                }).SingleOrDefault();
+
+            if (model == null)
+                return View("Error");
 
             return View(model);
         }
@@ -92,7 +119,7 @@ namespace BundlingSpike.Web.Controllers
 
                 Context.SaveChanges();
 
-                return RedirectToAction("Index", "Sites");
+                return RedirectToRoute("Default", new { controller = "Sites", action = "Details", id = model.Id });
             }
 
             return View(model);
@@ -132,7 +159,7 @@ namespace BundlingSpike.Web.Controllers
             Context.Sites.Remove(site);
             Context.SaveChanges();
 
-            return RedirectToAction("Index", "Sites");
+            return RedirectToRoute("Default", new { controller = "Sites", action = "Index" });
         }
     }
 }
